@@ -1,0 +1,38 @@
+{
+  "id": "60ffedd0-6ac5-4816-be19-b5557804f0cb",
+  "timestamp": "2017-05-20T02:52:19.102Z",
+  "lang": "en",
+  "result": {
+    "source": "agent",
+    "resolvedQuery": "what is three plus four",
+    "action": "TwoPlus",
+    "actionIncomplete": false,
+    "parameters": {
+      "first": "3",
+      "second": "4"
+    },
+    "contexts": [],
+    "metadata": {
+      "intentId": "b11a0d89-3e6e-431a-9d50-6324529794ae",
+      "webhookUsed": "true",
+      "webhookForSlotFillingUsed": "false",
+      "webhookResponseTime": 213,
+      "intentName": "TwoPlus"
+    },
+    "fulfillment": {
+      "speech": "I know I know. It's 34",
+      "messages": [
+        {
+          "type": 0,
+          "speech": "I know I know. It's 34"
+        }
+      ]
+    },
+    "score": 1
+  },
+  "status": {
+    "code": 200,
+    "errorType": "success"
+  },
+  "sessionId": "43b33cd0-888b-4521-87e9-30f5d9bba108"
+}
