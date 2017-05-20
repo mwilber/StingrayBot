@@ -1,9 +1,5 @@
-var requestData = {
-  action: "",
-  params: []
-};
-
 var responseData = {
+	version: "1.0",
     speech: ""
 };
 
@@ -14,8 +10,8 @@ var actions = {
     'FoodIntent':function(){
         responseData.speech = "Tuna tuna tuna tuna";
     },
-    'TwoPlus':function(){
-        responseData.speech = "I know I know. It's "+requestData.params.first.toString()+requestData.params.second.toString();
+    'TwoPlus':function(pParams){
+        responseData.speech = "I know I know. It's "+pParams.first.toString()+pParams.second.toString();
     },
 	'Help':function(){
 		responseData.speech = "I'm confused. Try asking me about my favorite food. Or aske me a math question, I can add numbers.";
@@ -25,19 +21,24 @@ var actions = {
 
 exports.handler = function(event, context) {
 
-    ParseEventData(event);
+    var requestData = ParseEventData(event);
 
     try{
-		actions[requestData.action]();
+		actions[requestData.action](requestData.params);
 	}catch(e){
 		actions['Help']();
 	}
 	
-    context.succeed(responseData);
+    context.succeed(buildResponse(responseData));
 	//context.succeed(requestData);
 };
 
 function ParseEventData(pEvent){
+
+	var result = {
+		action: "",
+		params: []
+	};
     
     // Get the action
 
@@ -46,45 +47,41 @@ function ParseEventData(pEvent){
     //if(typeof pEvent.result.action === "string"){
 	if(pEvent.hasOwnProperty('result')){
 		// Google Assistant
-        requestData.action = pEvent.result.action;
-		requestData.params = pEvent.result.parameters;
+        result.action = pEvent.result.action;
+		result.params = pEvent.result.parameters;
     }else if(pEvent.hasOwnProperty('request')){
 		// Amazon Alexa
-		requestData.action = pEvent.request.intent.name;
-		//requestData.params = pEvent.request.intent.slots;
+		result.action = pEvent.request.intent.name;
+		//result.params = pEvent.request.intent.slots;
 	}
     
     // Get the parameters
     //if(typeof pEvent.result.parameters === "object"){
     //    
     //}
+
+	return result;
     
 }
 
-function buildSpeechletResponseWithoutCard(output, repromptText, shouldEndSession) {
-    return {
-        outputSpeech: {
-            type: "PlainText",
-            text: output
-        },
-        reprompt: {
-            outputSpeech: {
-                type: "PlainText",
-                text: repromptText
-            }
-        },
-        shouldEndSession: shouldEndSession
-    };
-}
-
-function buildResponse(sessionAttributes, speechletResponse) {
-    
-    var objResponse = speechletResponse;
+function buildResponse(pData) {
     
     return {
-        version: "1.0",
-        sessionAttributes: sessionAttributes,
-        speech: objResponse.outputSpeech.text,
-        response: objResponse
+        version: pData.version,
+        //sessionAttributes: sessionAttributes,
+        speech: pData.speech,
+        response: {
+			outputSpeech: {
+				type: "PlainText",
+				text: pData.speech
+			},
+			// reprompt: {
+			// 	outputSpeech: {
+			// 		type: "PlainText",
+			// 		text: repromptText
+			// 	}
+			// },
+			//shouldEndSession: shouldEndSession
+		}
     };
 }
