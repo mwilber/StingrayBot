@@ -3,6 +3,17 @@ var responseData = {
     speech: ""
 };
 
+var props = {
+		'action':[
+			'result.action',
+			'request.intent.name'
+		],
+		'params':[
+			'result.parameters',
+			'request.intent.slots'
+		]
+	};
+
 var actions = {
     'TestIntent':function(){
         responseData.speech = "I am stingray bot. Input your data.";
@@ -34,42 +45,37 @@ exports.handler = function(event, context) {
 	context.succeed(requestData);
 };
 
+function SeekProperty(pObject, pQuery){
+	
+	if(pObject.hasOwnProperty(pQuery[0])){
+		if(pQuery.length == 1){
+			// return the property
+			return pObject[pQuery[0]];
+		}else{
+			// digg deeper
+			return SeekProperty(pObject[pQuery[0]], pQuery.slice(1));
+		}
+	}else{
+		return false;
+	}
+}
+
+
 function ParseEventData(pEvent){
 
-	var result = {
-		action: "",
-		params: []
-	};
+	var result = {};
 
-	var props = {
-		'result.action':[
-			'result.action',
-			'request.intent.name'
-		]
-	};
-
-
-	return result;
-    
-    // Get the action
-
-	// TODO: Make recursive function to do this
-
-    //if(typeof pEvent.result.action === "string"){
-	if(pEvent.hasOwnProperty('result')){
-		// Google Assistant
-        result.action = pEvent.result.action;
-		result.params = pEvent.result.parameters;
-    }else if(pEvent.hasOwnProperty('request')){
-		// Amazon Alexa
-		result.action = pEvent.request.intent.name;
-		//result.params = pEvent.request.intent.slots;
+	for(prop in props){
+		//console.log(prop);
+		for(path in props[prop]){
+			var query = props[prop][path].split('.');
+			var value = SeekProperty(pEvent, query);
+			if( value !== false ){
+				result[prop] = value;
+				break;
+			}
+		}
 	}
-    
-    // Get the parameters
-    //if(typeof pEvent.result.parameters === "object"){
-    //    
-    //}
 
 	return result;
     

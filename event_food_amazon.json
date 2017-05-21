@@ -1,0 +1,24 @@
+{
+  "session": {
+    "sessionId": "SessionId.34ac5749-9aa5-4b7a-b741-3a0d1872c4ad",
+    "application": {
+      "applicationId": "amzn1.ask.skill.3a77ef98-15a8-412f-9cb0-b8bc53e5be56"
+    },
+    "attributes": {},
+    "user": {
+      "userId": "amzn1.ask.account.AFXT3SEYK2TONHMKRVGM5JZ3JCCBYDVHKLSY72JQDWF4DQMO3SOWPGADYTKL5COBMB6VORXAWFGWW3WWN3UZE3FOA6G2DPQPOUFAUMDBLCUAHF36UJBCUKBSCJL5QWHOUJFLRHX2SXHDVKI7ARHAVDPJRQ5BLDVAS6GHNXNIIRBNATAW6G2YWVXQ6G4WWLTDVYLSEXCBUYQH2YA"
+    },
+    "new": true
+  },
+  "request": {
+    "type": "IntentRequest",
+    "requestId": "EdwRequestId.b668b997-c85b-49a4-897b-ed2483b81522",
+    "locale": "en-US",
+    "timestamp": "2017-05-21T01:34:49Z",
+    "intent": {
+      "name": "FavoriteFood",
+      "slots": {}
+    }
+  },
+  "version": "1.0"
+}
