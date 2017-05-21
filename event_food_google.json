@@ -1,0 +1,35 @@
+{
+  "id": "dc7fbc11-2061-4603-8e50-3c4bfbe44433",
+  "timestamp": "2017-05-21T01:33:44.205Z",
+  "lang": "en",
+  "result": {
+    "source": "agent",
+    "resolvedQuery": "what is your favorite food",
+    "action": "FoodIntent",
+    "actionIncomplete": false,
+    "parameters": {},
+    "contexts": [],
+    "metadata": {
+      "intentId": "04857bc8-409c-4a56-a5e0-af6fe22d09ef",
+      "webhookUsed": "true",
+      "webhookForSlotFillingUsed": "false",
+      "webhookResponseTime": 305,
+      "intentName": "Food"
+    },
+    "fulfillment": {
+      "speech": "Tuna tuna tuna tuna",
+      "messages": [
+        {
+          "type": 0,
+          "speech": "Tuna tuna tuna tuna"
+        }
+      ]
+    },
+    "score": 1
+  },
+  "status": {
+    "code": 200,
+    "errorType": "success"
+  },
+  "sessionId": "43b33cd0-888b-4521-87e9-30f5d9bba108"
+}

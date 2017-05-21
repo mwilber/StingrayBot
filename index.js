@@ -11,6 +11,7 @@ var actions = {
         responseData.speech = "Tuna tuna tuna tuna";
     },
     'TwoPlus':function(pParams){
+		// This is supposed to be a string concatenation, because fish can't do math. IT'S A JOKE.
         responseData.speech = "I know I know. It's "+pParams.first.toString()+pParams.second.toString();
     },
 	'Help':function(){
@@ -29,8 +30,8 @@ exports.handler = function(event, context) {
 		actions['Help']();
 	}
 	
-    context.succeed(buildResponse(responseData));
-	//context.succeed(requestData);
+    //context.succeed(buildResponse(responseData));
+	context.succeed(requestData);
 };
 
 function ParseEventData(pEvent){
@@ -39,6 +40,16 @@ function ParseEventData(pEvent){
 		action: "",
 		params: []
 	};
+
+	var props = {
+		'result.action':[
+			'result.action',
+			'request.intent.name'
+		]
+	};
+
+
+	return result;
     
     // Get the action
 
