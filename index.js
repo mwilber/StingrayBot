@@ -4,11 +4,11 @@ var responseData = {
 };
 
 var props = {
-		'action':[
+		action:[
 			'result.action',
 			'request.intent.name'
 		],
-		'params':[
+		params:[
 			'result.parameters',
 			'request.intent.slots'
 		]
@@ -18,7 +18,7 @@ var actions = {
     'TestIntent':function(){
         responseData.speech = "I am stingray bot. Input your data.";
     },
-    'FoodIntent':function(){
+    'FavoriteFood':function(){
         responseData.speech = "Tuna tuna tuna tuna";
     },
     'TwoPlus':function(pParams){
@@ -41,8 +41,8 @@ exports.handler = function(event, context) {
 		actions['Help']();
 	}
 	
-    //context.succeed(buildResponse(responseData));
-	context.succeed(requestData);
+    context.succeed(buildResponse(responseData));
+	//context.succeed(requestData);
 };
 
 function SeekProperty(pObject, pQuery){
@@ -60,6 +60,24 @@ function SeekProperty(pObject, pQuery){
 	}
 }
 
+// Convert object to simple {name: value} pairs
+function NormalizeObject(pObject, pKey, pVal){
+	var result = {};
+	for( idx in pObject ){
+		var lkey = idx;
+		var lval = "";
+		if( typeof pObject[idx] === "object"){
+			if( pKey !== "" && pObject[idx].hasOwnProperty(pKey) ) lkey = pObject[idx][pKey];
+			if( pVal !== "" && pObject[idx].hasOwnProperty(pVal) ){
+				lval = pObject[idx][pVal];
+			}
+		}else{
+			lval = pObject[idx];
+		}
+		result[lkey] = lval;
+	}
+	return result;
+}
 
 function ParseEventData(pEvent){
 
@@ -72,13 +90,16 @@ function ParseEventData(pEvent){
 			var value = SeekProperty(pEvent, query);
 			if( value !== false ){
 				result[prop] = value;
+				if(prop == 'params'){
+					// Amazon returns 'slots' as an array of objects with properties 'name' and 'value'
+					result[prop] = NormalizeObject(result[prop], 'name', 'value');
+				}
 				break;
 			}
 		}
 	}
 
 	return result;
-    
 }
 
 function buildResponse(pData) {
