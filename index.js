@@ -1,9 +1,21 @@
+var http = require('http');
+
 var responseData = {
 	version: "1.0",
-    speech: ""
+    speech: "",
+	stayalive: false
 };
 
 var props = {
+        userid: [
+            'session.user.userId',
+        ],
+		type: [
+			'request.type',
+		],
+		offset: [
+			'request.offsetInMilliseconds',
+		],
 		action:[
 			'result.action',
 			'request.intent.name'
@@ -14,36 +26,71 @@ var props = {
 		]
 	};
 
+// Some sample actions
 var actions = {
-    'TestIntent':function(){
-        responseData.speech = "I am stingray bot. Input your data.";
-    },
-    'FavoriteFood':function(){
-        responseData.speech = "Tuna tuna tuna tuna";
-    },
-    'TwoPlus':function(pParams){
-		// This is supposed to be a string concatenation, because fish can't do math. IT'S A JOKE.
+    'Welcome':function(){
+        responseData.speech = "Welcome to Stingray Bot. A boiler plate voice assistant. For more information, say, HELP";
+		responseData.stayalive = true;
+	},
+	'TwoPlus':function(pParams){
+		// This is supposed to be a string concatenation, because fish can't do math.
         responseData.speech = "I know I know. It's "+pParams.first.toString()+pParams.second.toString();
     },
+    'AMAZON.CancelIntent':function(){
+		actions['Cancel']();
+	},
+	'AMAZON.StopIntent':function(){
+		actions['Cancel']();
+	},
+	'AMAZON.HelpIntent':function(){
+	    actions['Help']();
+	},
+	'Cancel':function(){
+	    responseData.speech = "";
+	},
 	'Help':function(){
-		responseData.speech = "I'm confused. Try asking me about my favorite food. Or aske me a math question, I can add numbers.";
+		responseData.speech = "This is where I tell you about all my commands. For now, let's try some math. Say, add two plus two";
+	    responseData.stayalive = true;
+	},
+	'Default':function(){
+		responseData.speech = "I'm sorry. I don't understand that command.";
 	}
 };
 
+////////////////////////////////////////////////////////////////////
+// Main
+////////////////////////////////////////////////////////////////////
 
 exports.handler = function(event, context) {
 
-    var requestData = ParseEventData(event);
+	 responseData = {
+		version: "1.0",
+		speech: "",
+		stayalive: false
+	};
 
-    try{
-		actions[requestData.action](requestData.params);
-	}catch(e){
-		actions['Help']();
-	}
+	requestData = ParseEventData(event);
 	
-    context.succeed(buildResponse(responseData));
+	if(requestData.type === "LaunchRequest"){
+        actions['Welcome']();
+    }else if(requestData.type === "IntentRequest"){
+        try{
+            actions[requestData.action](requestData.params);
+        }catch(e){
+			console.log(e);
+			actions['Default']();
+		}
+    }
+	
+	context.succeed(buildResponse(responseData));
+	// Use this during debugging to output how the request data is getting parsed
 	//context.succeed(requestData);
+
 };
+
+////////////////////////////////////////////////////////////////////
+// Request Handlers
+////////////////////////////////////////////////////////////////////
 
 function SeekProperty(pObject, pQuery){
 	
@@ -63,7 +110,7 @@ function SeekProperty(pObject, pQuery){
 // Convert object to simple {name: value} pairs
 function NormalizeObject(pObject, pKey, pVal){
 	var result = {};
-	for( idx in pObject ){
+	for( var idx in pObject ){
 		var lkey = idx;
 		var lval = "";
 		if( typeof pObject[idx] === "object"){
@@ -83,9 +130,9 @@ function ParseEventData(pEvent){
 
 	var result = {};
 
-	for(prop in props){
+	for(var prop in props){
 		//console.log(prop);
-		for(path in props[prop]){
+		for( var path in props[prop]){
 			var query = props[prop][path].split('.');
 			var value = SeekProperty(pEvent, query);
 			if( value !== false ){
@@ -102,24 +149,28 @@ function ParseEventData(pEvent){
 	return result;
 }
 
+////////////////////////////////////////////////////////////////////
+// Response Handlers
+////////////////////////////////////////////////////////////////////
+
 function buildResponse(pData) {
     
-    return {
-        version: pData.version,
-        //sessionAttributes: sessionAttributes,
-        speech: pData.speech,
-        response: {
-			outputSpeech: {
-				type: "PlainText",
-				text: pData.speech
-			},
-			// reprompt: {
-			// 	outputSpeech: {
-			// 		type: "PlainText",
-			// 		text: repromptText
-			// 	}
-			// },
-			//shouldEndSession: shouldEndSession
-		}
+    var response = {
+    version: pData.version,
+    //sessionAttributes: sessionAttributes,
+    speech: pData.speech,
+        "response": {
+            outputSpeech: {
+    			type: "PlainText",
+    			ssml: "<speak>"+pData.speech+"</speak>",
+    			text: pData.speech
+    		},
+    		shouldEndSession: true,
+      }
     };
+    if( responseData.stayalive === true){
+        response.response['shouldEndSession'] = false;
+    }
+    return response;
+    
 }
