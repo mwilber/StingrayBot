@@ -2,8 +2,9 @@
 
 An exmaple nodejs script that handles requests and responses for both Amazon Echo and Google Home from the same instance. This script was written for an AWS Lambda function but should work in any nodejs environment.
 
-##Currently Supports
-- Custom intents (example intents for Startup "Welcome" and instructions "Help" must be set up in your skill interaction model.)
+## Currently Supports
+- Custom intents 
+-- *example intents for Startup "Welcome" and instructions "Help" must be set up in your skill interaction model.
 - Support for intent parameters (example action "TwoPlus")
 - Amazon required intents
 
