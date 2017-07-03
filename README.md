@@ -4,7 +4,7 @@ An exmaple nodejs script that handles requests and responses for both Amazon Ech
 
 ## Currently Supports
 - Custom intents 
-    - *example intents for Startup "Welcome" and instructions "Help" must be set up in your skill interaction model.
+    - (example intents for Startup "Welcome" and instructions "Help" must be set up in your skill interaction model.)
 - Support for intent parameters (example action "TwoPlus")
 - Amazon required intents
 
